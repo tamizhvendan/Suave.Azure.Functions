@@ -1,6 +1,6 @@
-﻿module FSharp.ProjectScaffold.Tests
+module Suave.Azure.Functions.Tests
 
-open FSharp.ProjectTemplate
+open Suave.Azure.Functions
 open NUnit.Framework
 
 [<Test>]

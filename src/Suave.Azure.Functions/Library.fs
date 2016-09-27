@@ -1,4 +1,4 @@
-﻿namespace FSharp.ProjectTemplate
+namespace Suave.Azure.Functions
 
 /// Documentation for my library
 ///
