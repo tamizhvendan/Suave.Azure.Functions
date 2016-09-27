@@ -1,8 +1,12 @@
-// Learn more about F# at http://fsharp.org. See the 'F# Tutorial' project
-// for more guidance on F# programming.
+#r "./../../packages/Suave/lib/net40/Suave.dll"
+#r "./../../packages/System.Net.Http/lib/net46/System.Net.Http.dll"
+open Suave.Http
+open System.Net
+open FSharp.Reflection
 
-#load "Library.fs"
-open Suave.Azure.Functions
+let unionCaseByName<'a> name = 
+    match FSharpType.GetUnionCases typeof<'a> |> Array.filter (fun case -> case.Name = name) with
+    |[|case|] -> Some case
+    |_ -> None
 
-let num = Library.hello 42
-printfn "%i" num
+unionCaseByName<HttpCode> "HTTP_201"

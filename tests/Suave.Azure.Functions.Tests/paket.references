@@ -1,4 +1,7 @@
 FSharp.Core
+Suave
+System.Net.Http
 group Test
-NUnit
-NUnit.Runners
+XUnit
+FsCheck
+FsCheck.XUnit
