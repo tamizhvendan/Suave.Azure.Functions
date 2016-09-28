@@ -4,9 +4,11 @@ open Suave.Http
 open System.Net
 open FSharp.Reflection
 
-let unionCaseByName<'a> name = 
+let unionCase<'a> name value = 
     match FSharpType.GetUnionCases typeof<'a> |> Array.filter (fun case -> case.Name = name) with
-    |[|case|] -> Some case
+    |[|case|] -> 
+        FSharpValue.MakeUnion(case, value) :?> 'a |> Some
     |_ -> None
 
-unionCaseByName<HttpCode> "HTTP_201"
+unionCase<HttpCode> "HTTP_201" [||]
+
