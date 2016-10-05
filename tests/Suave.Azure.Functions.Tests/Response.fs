@@ -1,10 +1,11 @@
-module Suave.Azure.Functions.Tests
+module Suave.Azure.Functions.Tests.Response
 
 open Suave.Azure.Functions
 open Suave.Http
 open System.Net
 open FsCheck
 open FsCheck.Xunit
+open System.Net.Http
 
 [<Property>]
 let ``httpStatusCode maps Suave's HttpCode to System.Net's HttpStatusCode `` (httpCode : HttpCode) =
