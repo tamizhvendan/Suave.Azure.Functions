@@ -5,19 +5,26 @@ open Xunit
 open FsCheck
 open FsCheck.Xunit
 open Suave.Azure.Functions
+open System.Net
 open System.Net.Http
+open System.Net.Http.Headers
 open System.Collections.Generic
 
+let toMemberData x : IEnumerable<obj[]> = 
+  (List.map (fun m -> m :> obj)
+  >> List.map Array.singleton
+  >> List.toSeq) x
 
-let httpMethods : IEnumerable<obj[]> = 
+let httpMethods = 
   [
    HttpMethod.Get; HttpMethod.Post; HttpMethod.Put; HttpMethod.Delete
    HttpMethod.Head; HttpMethod.Trace; HttpMethod.Options;
    new HttpMethod("Patch"); new HttpMethod("Other"); new HttpMethod("Connect")
   ] 
-  |> List.map (fun m -> m :> obj)
-  |> List.map Array.singleton
-  |> List.toSeq
+  |> toMemberData
+
+
+
 let toLower (str : System.String) = str.ToLowerInvariant()
 
 [<Theory>]
@@ -37,3 +44,31 @@ let ``httpMethod maps Suave.Http's HttpMethod to System.Net.Http's HttpMethod`` 
       httpMethod.Value.Method
       |> toLower
       |> (=) (suaveHttpMethod |> string |> toLower)
+
+[<Fact>]
+let ``suaveHttpRequestHeaders maps System.Net.Http's HttpRequestHeaders to Suave.Http's HttpHeaders`` () =
+ let request = new System.Net.Http.HttpRequestMessage()
+ request.Headers.Add("X-Test1", "1")
+ request.Headers.Add("X-Test2", ["2"; "22"])
+ let suaveHeaders = Request.suaveHttpRequestHeaders request.Headers
+ let values key =
+  suaveHeaders |> Seq.filter (fun x-> fst x = key) |> Seq.map snd |> Seq.toList
+ let expected = request.Headers |> Seq.map (fun h -> h.Key, (h.Value |> Seq.toList))
+ expected
+ |> Seq.iter (fun (key,vs) -> Assert.True(values key = vs))
+
+[<Fact>]
+let ``httpRequestHeaders maps Suave.Http's HttpHeaders to System.Net.Http's HttpRequestHeaders ``() =
+  let suaveHeaders = [
+    "X-Test1" , "1"
+    "X-Test2",  "2"
+    "X-Test2", "22"
+  ]
+  let requestHeaders = Request.httpRequestHeaders suaveHeaders |> Seq.map (fun h -> (h.Key, h.Value))
+  let equal (key,value) =
+    if key = "" then true else
+      let header = requestHeaders |> Seq.find (fun (k,_) -> k = key)
+      let values = snd header
+      values |> Seq.contains value
+  suaveHeaders |> List.forall equal |> Assert.True
+  Assert.Equal(2, requestHeaders |> Seq.length)

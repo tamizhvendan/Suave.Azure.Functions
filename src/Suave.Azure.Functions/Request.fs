@@ -25,3 +25,13 @@ let httpMethod (suaveHttpMethod : Suave.Http.HttpMethod) =
     let normalized = method.ToLowerInvariant()
     string(System.Char.ToUpper(normalized.[0])) + normalized.Substring(1)
     |> HttpMethod |> Some
+
+let suaveHttpRequestHeaders (httpRequestHeaders : Headers.HttpRequestHeaders) = 
+  httpRequestHeaders
+  |> Seq.collect (fun h -> h.Value |> Seq.map (fun v -> (h.Key, v)))
+  |> Seq.toList
+
+let httpRequestHeaders (suaveHttpRequestHeaders : (string * string) list) =
+  let req = new HttpRequestMessage()
+  suaveHttpRequestHeaders |> List.iter req.Headers.Add
+  req.Headers
