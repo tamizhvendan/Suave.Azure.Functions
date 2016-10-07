@@ -9,6 +9,7 @@ open System.Net
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Collections.Generic
+open TestUtil
 
 let toMemberData x : IEnumerable<obj[]> = 
   (List.map (fun m -> m :> obj)
@@ -51,8 +52,7 @@ let ``suaveHttpRequestHeaders maps System.Net.Http's HttpRequestHeaders to Suave
  request.Headers.Add("X-Test1", "1")
  request.Headers.Add("X-Test2", ["2"; "22"])
  let suaveHeaders = Request.suaveHttpRequestHeaders request.Headers
- let values key =
-  suaveHeaders |> Seq.filter (fun x-> fst x = key) |> Seq.map snd |> Seq.toList
+ let values = values suaveHeaders
  let expected = request.Headers |> Seq.map (fun h -> h.Key, (h.Value |> Seq.toList))
  expected
  |> Seq.iter (fun (key,vs) -> Assert.True(values key = vs))
@@ -64,11 +64,6 @@ let ``httpRequestHeaders maps Suave.Http's HttpHeaders to System.Net.Http's Http
     "X-Test2",  "2"
     "X-Test2", "22"
   ]
-  let requestHeaders = Request.httpRequestHeaders suaveHeaders |> Seq.map (fun h -> (h.Key, h.Value))
-  let equal (key,value) =
-    if key = "" then true else
-      let header = requestHeaders |> Seq.find (fun (k,_) -> k = key)
-      let values = snd header
-      values |> Seq.contains value
-  suaveHeaders |> List.forall equal |> Assert.True
+  let requestHeaders = Request.httpRequestHeaders suaveHeaders |> Seq.map (fun h -> (h.Key, h.Value))  
+  suaveHeaders |> List.forall (contains requestHeaders) |> Assert.True
   Assert.Equal(2, requestHeaders |> Seq.length)
