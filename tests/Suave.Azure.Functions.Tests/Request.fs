@@ -10,6 +10,7 @@ open System.Net.Http
 open System.Net.Http.Headers
 open System.Collections.Generic
 open TestUtil
+open System.Text
 
 let toMemberData x : IEnumerable<obj[]> = 
   (List.map (fun m -> m :> obj)
@@ -67,3 +68,24 @@ let ``httpRequestHeaders maps Suave.Http's HttpHeaders to System.Net.Http's Http
   let requestHeaders = Request.httpRequestHeaders suaveHeaders |> Seq.map (fun h -> (h.Key, h.Value))  
   suaveHeaders |> List.forall (contains requestHeaders) |> Assert.True
   Assert.Equal(2, requestHeaders |> Seq.length)
+
+[<Fact>]
+let ``suaveRawForm maps System.Net.Http's HttpContent to byte array``() =
+  let body = """{ "foo" : "bar"}"""
+  let content = new StringContent(body) :> HttpContent  
+  let actual = Request.suaveRawForm content |> Async.RunSynchronously
+  Assert.Equal(body, Encoding.UTF8.GetString(actual))
+
+[<Fact>]
+let ``httpContent map Suave's RawForm Value to System.Net.Http's HttpContent``() =
+  let body = """{ "foo" : "bar"}"""
+  let rawForm = Encoding.UTF8.GetBytes body
+  let actual = 
+    (Request.httpContent rawForm).ReadAsByteArrayAsync()
+    |> Async.AwaitTask
+    |> Async.RunSynchronously
+  Assert.Equal(body, Encoding.UTF8.GetString(actual))
+    
+  
+  
+

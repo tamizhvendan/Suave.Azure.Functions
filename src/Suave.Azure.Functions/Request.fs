@@ -35,3 +35,11 @@ let httpRequestHeaders (suaveHttpRequestHeaders : (string * string) list) =
   let req = new HttpRequestMessage()
   suaveHttpRequestHeaders |> List.iter req.Headers.Add
   req.Headers
+
+let suaveRawForm (content : HttpContent) = async {
+  return! content.ReadAsByteArrayAsync() |> Async.AwaitTask
+}
+
+let httpContent (rawForm : byte[]) =
+  new ByteArrayContent(rawForm) :> HttpContent
+  
