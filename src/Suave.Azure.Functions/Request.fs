@@ -42,4 +42,18 @@ let suaveRawForm (content : HttpContent) = async {
 
 let httpContent (rawForm : byte[]) =
   new ByteArrayContent(rawForm) :> HttpContent
+
+let suaveRawQuery (requestUri : System.Uri) =
+  if requestUri.Query.Length > 1 then
+    requestUri.Query.Substring(1)
+  else
+    ""
+
+let suaveHttpRequest (httpRequestMessage : HttpRequestMessage) =
+  {
+    HttpRequest.empty with 
+      headers = suaveHttpRequestHeaders httpRequestMessage.Headers
+      url = httpRequestMessage.RequestUri
+  }
+  |> async.Return
   

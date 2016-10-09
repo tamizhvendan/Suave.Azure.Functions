@@ -18,3 +18,4 @@ group Test
   nuget XUnit
   nuget FsCheck.XUnit
   nuget xunit.runner.console
+  github jet/xunit-jet src/xunit.jet/Assert.fs

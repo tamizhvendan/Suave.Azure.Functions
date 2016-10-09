@@ -495,3 +495,6 @@ NUGET
       xunit.abstractions (>= 2.0) - framework: dnxcore50
       xunit.extensibility.core (2.1) - framework: >= net45, dnx451, dnxcore50, monoandroid, monotouch, xamarinios, winv4.5, wpv8.0, wpav8.1
     xunit.runner.console (2.1)
+GITHUB
+  remote: jet/xunit-jet
+    src/xunit.jet/Assert.fs (36a3e4b73259128d4826f5a1c6241417c1d426c1)

@@ -11,6 +11,8 @@ open System.Net.Http.Headers
 open System.Collections.Generic
 open TestUtil
 open System.Text
+open System
+open xunit.jet.Assert
 
 let toMemberData x : IEnumerable<obj[]> = 
   (List.map (fun m -> m :> obj)
@@ -85,7 +87,29 @@ let ``httpContent map Suave's RawForm Value to System.Net.Http's HttpContent``()
     |> Async.AwaitTask
     |> Async.RunSynchronously
   Assert.Equal(body, Encoding.UTF8.GetString(actual))
-    
+
+
+[<Theory>]
+[<InlineData("http://test.com/api/hello?foo=bar","foo=bar")>]
+[<InlineData("https://test.com/api/hello?foo=bar&x=y","foo=bar&x=y")>]
+[<InlineData("http://test.com/api/hello","")>]
+let ``suaveRawQuery retrieves query strings from request uri`` (url : string, expected : string) =
+  let uri = new Uri(url)
+  let rawQuery = Request.suaveRawQuery uri
+  Assert.Equal(expected, rawQuery)
+
+[<Fact>]
+let ``suaveHttpRequest maps HttpRequestMessage to Suave's HttpRequest``() =
+  let req = new HttpRequestMessage(HttpMethod.Post, new Uri("http://test.com/api/hello"))
+  req.Headers.Add("X-TEST1", "1")
+  req.Headers.Add("X-TEST2", "2")
+  req.Content <- new StringContent("""{"x":10}""")
+  let suaveHttpRequest = Request.suaveHttpRequest req |> Async.RunSynchronously
+  equalDeep suaveHttpRequest.headers (Request.suaveHttpRequestHeaders req.Headers)
+  equalDeep req.RequestUri suaveHttpRequest.url
+
+
+  
   
   
 

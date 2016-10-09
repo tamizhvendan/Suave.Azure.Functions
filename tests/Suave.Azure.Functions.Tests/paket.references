@@ -4,3 +4,4 @@ group Test
 XUnit
 FsCheck
 FsCheck.XUnit
+File: Assert.fs
