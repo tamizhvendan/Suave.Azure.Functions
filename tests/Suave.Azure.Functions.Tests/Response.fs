@@ -8,6 +8,15 @@ open FsCheck
 open FsCheck.Xunit
 open System.Net.Http
 open TestUtil
+open System.Text
+open xunit.jet.Assert
+
+let suaveHeaders = [
+    "X-Test1" , "1"
+    "X-Test2",  "2"
+    "X-Test2", "22"
+    "X-Test3", "3"
+  ]
 
 [<Property>]
 let ``httpStatusCode maps Suave's HttpCode to System.Net's HttpStatusCode `` (httpCode : HttpCode) =
@@ -41,12 +50,47 @@ let ``suaveHttpResponseHeaders maps System.Net.Http's HttpResponseHeaders to Sua
 
 [<Fact>]
 let ``httpResponseHeaders maps Suave.Http's HttpHeaders to System.Net.Http's HttpResponseHeaders ``()=
-  let suaveHeaders = [
-    "X-Test1" , "1"
-    "X-Test2",  "2"
-    "X-Test2", "22"
-    "X-Test3", "3"
-  ]
-  let httpResponseHeaders = Response.httpResponseHeaders suaveHeaders |> Seq.map (fun h -> (h.Key, h.Value))  
+  let headers =
+    let res = new HttpResponseMessage()
+    res.Headers
+  let httpResponseHeaders = Response.httpResponseHeaders suaveHeaders headers |> Seq.map (fun h -> (h.Key, h.Value))  
   suaveHeaders |> List.forall (contains httpResponseHeaders) |> Assert.True
   Assert.Equal(3, httpResponseHeaders |> Seq.length)
+
+
+[<Fact>]
+let ``httpResponseMessage maps Suave's HttpResult to HttpResponseMessage``() =
+  let responseBody = """{ "x" : "y" }"""
+  
+  let suaveHttpResult = 
+    {
+      status = HTTP_200
+      headers = suaveHeaders
+      content = Bytes (Encoding.UTF8.GetBytes responseBody)
+      writePreamble = false
+    }
+  let httpResponseMessage = Response.httpResponseMessage suaveHttpResult
+  let actualContent = runTask <| httpResponseMessage.Content.ReadAsStringAsync() 
+  
+  equalDeep responseBody actualContent
+  equalDeep httpResponseMessage.StatusCode HttpStatusCode.OK
+  suaveHeaders
+  |> List.iter (fun (k,v) -> Assert.True(httpResponseMessage.Headers.GetValues(k) |> Seq.contains v))
+
+
+
+[<Fact>]
+let ``suaveHttpResult maps HttpResponseMessage to Suave's HttpResult`` () =
+  let responseBody = """{ "x" : "y" }"""
+  let res = new HttpResponseMessage(HttpStatusCode.Created)
+  res.Content <- new StringContent(responseBody)
+  suaveHeaders |> List.iter res.Headers.Add  
+
+  let suaveHttpResult = Response.suaveHttpResult res |> Async.RunSynchronously
+  let content = 
+    match suaveHttpResult.content with
+    | Bytes xs -> xs
+    | _ -> Array.empty
+  equalDeep suaveHeaders suaveHttpResult.headers 
+  equalDeep HTTP_201 suaveHttpResult.status
+  equalDeep responseBody (Encoding.UTF8.GetString content)

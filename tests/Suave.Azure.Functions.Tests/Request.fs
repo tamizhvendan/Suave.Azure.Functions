@@ -27,8 +27,6 @@ let httpMethods =
   ] 
   |> toMemberData
 
-
-
 let toLower (str : System.String) = str.ToLowerInvariant()
 
 [<Theory>]
@@ -128,7 +126,7 @@ let ``httpRequestMessage maps Suave's HttpRequest to HttpRequestMessage`` () =
     }
   let httpRequestMessage = Request.httpRequestMessage suaveHttpRequest
   
-  let content = httpRequestMessage.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
+  let content = runTask <| httpRequestMessage.Content.ReadAsStringAsync() 
   equalDeep "1" (httpRequestMessage.Headers.GetValues("X-H1") |> Seq.head)
   equalDeep "2" (httpRequestMessage.Headers.GetValues("X-H2") |> Seq.head)
   equalDeep suaveHttpRequest.url httpRequestMessage.RequestUri
