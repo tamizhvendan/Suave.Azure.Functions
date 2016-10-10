@@ -2,6 +2,7 @@
 
 open Suave.Http
 open System.Net.Http
+open System.Net.Http.Headers
 
 let suaveHttpMethod (httpMethod : HttpMethod) =
    match httpMethod.Method with
@@ -31,10 +32,9 @@ let suaveHttpRequestHeaders (httpRequestHeaders : Headers.HttpRequestHeaders) =
   |> Seq.collect (fun h -> h.Value |> Seq.map (fun v -> (h.Key, v)))
   |> Seq.toList
 
-let httpRequestHeaders (suaveHttpRequestHeaders : (string * string) list) =
-  let req = new HttpRequestMessage()
-  suaveHttpRequestHeaders |> List.iter req.Headers.Add
-  req.Headers
+let httpRequestHeaders (suaveHttpRequestHeaders : (string * string) list) (headers : HttpRequestHeaders) =
+  suaveHttpRequestHeaders |> List.iter headers.Add
+  headers
 
 let suaveRawForm (content : HttpContent) = async {
   return! content.ReadAsByteArrayAsync() |> Async.AwaitTask
@@ -49,11 +49,23 @@ let suaveRawQuery (requestUri : System.Uri) =
   else
     ""
 
-let suaveHttpRequest (httpRequestMessage : HttpRequestMessage) =
-  {
+let suaveHttpRequest (httpRequestMessage : HttpRequestMessage) = async {
+  let! rawForm = suaveRawForm httpRequestMessage.Content
+  return {
     HttpRequest.empty with 
       headers = suaveHttpRequestHeaders httpRequestMessage.Headers
       url = httpRequestMessage.RequestUri
+      rawForm = rawForm
+      rawQuery = suaveRawQuery httpRequestMessage.RequestUri
+      ``method`` = suaveHttpMethod httpRequestMessage.Method
+      host = httpRequestMessage.RequestUri.Host
   }
-  |> async.Return
-  
+}
+
+let httpRequestMessage (suaveHttpRequest : HttpRequest) =   
+  let req = new HttpRequestMessage()
+  httpRequestHeaders suaveHttpRequest.headers req.Headers |> ignore
+  req.RequestUri <- suaveHttpRequest.url
+  req.Content <- new ByteArrayContent(suaveHttpRequest.rawForm)
+  req.Method <- defaultArg (httpMethod suaveHttpRequest.method) (new HttpMethod("Unknown"))
+  req

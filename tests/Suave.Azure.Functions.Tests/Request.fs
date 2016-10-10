@@ -67,7 +67,9 @@ let ``httpRequestHeaders maps Suave.Http's HttpHeaders to System.Net.Http's Http
     "X-Test2",  "2"
     "X-Test2", "22"
   ]
-  let requestHeaders = Request.httpRequestHeaders suaveHeaders |> Seq.map (fun h -> (h.Key, h.Value))  
+  let req = new HttpRequestMessage()
+  let requestHeaders = 
+    Request.httpRequestHeaders suaveHeaders req.Headers |> Seq.map (fun h -> (h.Key, h.Value))  
   suaveHeaders |> List.forall (contains requestHeaders) |> Assert.True
   Assert.Equal(2, requestHeaders |> Seq.length)
 
@@ -100,14 +102,38 @@ let ``suaveRawQuery retrieves query strings from request uri`` (url : string, ex
 
 [<Fact>]
 let ``suaveHttpRequest maps HttpRequestMessage to Suave's HttpRequest``() =
-  let req = new HttpRequestMessage(HttpMethod.Post, new Uri("http://test.com/api/hello"))
+  let req = new HttpRequestMessage(HttpMethod.Post, new Uri("http://test.com/api/hello?foo=bar"))
   req.Headers.Add("X-TEST1", "1")
   req.Headers.Add("X-TEST2", "2")
-  req.Content <- new StringContent("""{"x":10}""")
+  let postContent = """{"x":10}"""
+  req.Content <- new StringContent(postContent)
   let suaveHttpRequest = Request.suaveHttpRequest req |> Async.RunSynchronously
   equalDeep suaveHttpRequest.headers (Request.suaveHttpRequestHeaders req.Headers)
   equalDeep req.RequestUri suaveHttpRequest.url
+  equalDeep postContent (Encoding.UTF8.GetString suaveHttpRequest.rawForm)
+  equalDeep "foo=bar" suaveHttpRequest.rawQuery
+  equalDeep "POST" (suaveHttpRequest.method.ToString())
+  equalDeep req.RequestUri.Host suaveHttpRequest.host
 
+
+[<Fact>]
+let ``httpRequestMessage maps Suave's HttpRequest to HttpRequestMessage`` () =
+  let postContent = """{"x":10}"""
+  let suaveHttpRequest = 
+    {HttpRequest.empty with 
+        headers = [("X-H1", "1"); ("X-H2", "2")]
+        url = new Uri("http://test.com/api/hello?foo=bar")
+        rawForm = Encoding.UTF8.GetBytes(postContent)
+        ``method`` = HttpMethod.POST
+    }
+  let httpRequestMessage = Request.httpRequestMessage suaveHttpRequest
+  
+  let content = httpRequestMessage.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
+  equalDeep "1" (httpRequestMessage.Headers.GetValues("X-H1") |> Seq.head)
+  equalDeep "2" (httpRequestMessage.Headers.GetValues("X-H2") |> Seq.head)
+  equalDeep suaveHttpRequest.url httpRequestMessage.RequestUri
+  equalDeep postContent content
+  equalDeep HttpMethod.Post httpRequestMessage.Method
 
   
   
