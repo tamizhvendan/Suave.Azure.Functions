@@ -1,4 +1,4 @@
-module Suave.Azure.Functions.TestUtil
+module Suave.Azure.Functions.Tests.TestUtil
 
 open System.Threading.Tasks
 

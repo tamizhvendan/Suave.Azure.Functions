@@ -6,14 +6,14 @@ open System.Net.Http.Headers
 
 let suaveHttpMethod (httpMethod : HttpMethod) =
    match httpMethod.Method with
-   | "Get" -> HttpMethod.GET
-   | "Put" -> HttpMethod.PUT
-   | "Post" -> HttpMethod.POST
-   | "Delete" -> HttpMethod.DELETE
-   | "Patch" -> HttpMethod.PATCH
-   | "Head" -> HttpMethod.HEAD
-   | "Trace" -> HttpMethod.TRACE
-   | "Connect" -> HttpMethod.CONNECT
+   | "GET" -> HttpMethod.GET
+   | "PUT" -> HttpMethod.PUT
+   | "POST" -> HttpMethod.POST
+   | "DELETE" -> HttpMethod.DELETE
+   | "PATCH" -> HttpMethod.PATCH
+   | "HEAD" -> HttpMethod.HEAD
+   | "TRACE" -> HttpMethod.TRACE
+   | "CONNECT" -> HttpMethod.CONNECT
    | "OPTIONS" -> HttpMethod.OPTIONS
    | x -> HttpMethod.OTHER x
 
@@ -37,7 +37,10 @@ let httpRequestHeaders (suaveHttpRequestHeaders : (string * string) list) (heade
   headers
 
 let suaveRawForm (content : HttpContent) = async {
-  return! content.ReadAsByteArrayAsync() |> Async.AwaitTask
+  if isNull content then
+   return Array.empty
+  else 
+    return! content.ReadAsByteArrayAsync() |> Async.AwaitTask
 }
 
 let httpContent (rawForm : byte[]) =

@@ -34,7 +34,7 @@ let toLower (str : System.String) = str.ToLowerInvariant()
 let ``suaveHttpMethod maps System.Net.Http's HttpMethod to Suave.Http's HttpMethod`` (httpMethod : HttpMethod) =
   
   let suaveHttpMethod = Request.suaveHttpMethod httpMethod
-  Assert.Equal(httpMethod |> string |> toLower, suaveHttpMethod |> string |> toLower)
+  Assert.Equal(httpMethod |> string, suaveHttpMethod |> string)
 
 [<Property>]
 let ``httpMethod maps Suave.Http's HttpMethod to System.Net.Http's HttpMethod`` (suaveHttpMethod : Suave.Http.HttpMethod) =
