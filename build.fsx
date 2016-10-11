@@ -10,6 +10,8 @@ open Fake.ReleaseNotesHelper
 open Fake.UserInputHelper
 open System
 open System.IO
+open Fake.Testing
+
 #if MONO
 #else
 #load "packages/build/SourceLink.Fake/tools/Fake.fsx"
@@ -144,11 +146,7 @@ Target "Build" (fun _ ->
 
 Target "RunTests" (fun _ ->
     !! testAssemblies
-    |> NUnit (fun p ->
-        { p with
-            DisableShadowCopy = true
-            TimeOut = TimeSpan.FromMinutes 20.
-            OutputFile = "TestResults.xml" })
+    |> xUnit2 (fun p -> {p with ToolPath = "./packages/test/xunit.runner.console/tools/xunit.console.exe"})
 )
 
 #if MONO

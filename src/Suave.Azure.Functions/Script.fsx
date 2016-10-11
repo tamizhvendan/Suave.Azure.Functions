@@ -1,8 +1,12 @@
-// Learn more about F# at http://fsharp.org. See the 'F# Tutorial' project
-// for more guidance on F# programming.
+#I "./../../packages"
+#r "Suave/lib/net40/Suave.dll"
+#r "System.Net.Http/lib/net46/System.Net.Http.dll"
+open System
 
-#load "Library.fs"
-open Suave.Azure.Functions
+let uri = new Uri("http://tamazurefun.azurewebsites.com/api/Hello/Suave?foo=bar&bar=baz")
 
-let num = Library.hello 42
-printfn "%i" num
+uri.Host
+uri.Port
+uri.AbsolutePath
+uri.AbsoluteUri
+uri.LocalPath

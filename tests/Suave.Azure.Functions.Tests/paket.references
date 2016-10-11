@@ -1,4 +1,7 @@
 FSharp.Core
+Suave
 group Test
-NUnit
-NUnit.Runners
+XUnit
+FsCheck
+FsCheck.XUnit
+File: Assert.fs

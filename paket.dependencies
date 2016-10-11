@@ -1,7 +1,8 @@
 source https://nuget.org/api/v2
 
 nuget FSharp.Core redirects: force
-
+nuget Suave
+nuget System.Net.Http
 group Build
   source https://nuget.org/api/v2
   
@@ -12,7 +13,9 @@ group Build
   github fsharp/FAKE modules/Octokit/Octokit.fsx
 
 group Test
-  source https://nuget.org/api/v2
-  
-  nuget NUnit ~> 2
-  nuget NUnit.Runners ~> 2
+  source https://nuget.org/api/v2  
+  nuget FsCheck
+  nuget XUnit
+  nuget FsCheck.XUnit
+  nuget xunit.runner.console
+  github jet/xunit-jet src/xunit.jet/Assert.fs
