@@ -7,7 +7,11 @@ open System.Net.Http
 open System.Net
 
 let runWebPart (app : WebPart) (httpRequestMessage : HttpRequestMessage) = async {
-  
+  let isExists, value = httpRequestMessage.Headers.TryGetValues("X-Suave-Path")
+  if isExists then
+    let requestUri = httpRequestMessage.RequestUri
+    let modifiedUrl = requestUri.ToString().Replace(requestUri.AbsolutePath, value |> Seq.head)
+    httpRequestMessage.RequestUri <- new System.Uri(modifiedUrl)  
   let! req = suaveHttpRequest httpRequestMessage
   let! ctx = app {HttpContext.empty with request = req}
   match ctx with

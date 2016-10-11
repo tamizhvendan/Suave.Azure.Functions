@@ -33,3 +33,23 @@ let ``runWebPart returns NotFound if WebPart execution returns none``() =
   let res = runWebPart app req |> Async.RunSynchronously
 
   equalDeep HttpStatusCode.NotFound res.StatusCode
+
+[<Fact>]
+let ``runWebPart takes path from request header if present``() =
+  let req = new HttpRequestMessage(HttpMethod.Post, "https://foobar.azurewebsites.net/api/HelloRest")
+  req.Headers.Add("X-Suave-Path", "/api/Hello")
+  let app = path "/api/Hello" >=> OK "hello"  
+  let res = runWebPart app req |> Async.RunSynchronously
+
+  let content = runTask <| res.Content.ReadAsStringAsync()
+  equalDeep "hello" content
+  equalDeep HttpStatusCode.OK res.StatusCode
+
+[<Fact>]
+let ``runWebPart returns NotFound if WebPart execution returns none for custom path``() =
+  let req = new HttpRequestMessage(HttpMethod.Post, url)
+  let app = path "/api/Persons" >=> OK "hello"
+  let res = runWebPart app req |> Async.RunSynchronously
+
+  equalDeep HttpStatusCode.NotFound res.StatusCode
+
