@@ -8,11 +8,15 @@ open System.Net
 
 let runWebPart (app : WebPart) (httpRequestMessage : HttpRequestMessage) = async {
   let isExists, value = httpRequestMessage.Headers.TryGetValues("X-Suave-Path")
-  if isExists then
-    let requestUri = httpRequestMessage.RequestUri
-    let modifiedUrl = requestUri.ToString().Replace(requestUri.AbsolutePath, value |> Seq.head)
-    httpRequestMessage.RequestUri <- new System.Uri(modifiedUrl)  
-  let! req = suaveHttpRequest httpRequestMessage
+  let! req = async {
+    let! req = suaveHttpRequest httpRequestMessage
+    if isExists then
+      let requestUri = httpRequestMessage.RequestUri
+      let modifiedUrl = requestUri.ToString().Replace(requestUri.AbsolutePath, value |> Seq.head)
+      return {req with url = new System.Uri(modifiedUrl) }
+    else
+      return req
+  }
   let! ctx = app {HttpContext.empty with request = req}
   match ctx with
   | Some ctx -> 
