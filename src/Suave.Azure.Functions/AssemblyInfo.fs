@@ -10,5 +10,8 @@ open System.Reflection
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] Version = "0.0.1"
-    let [<Literal>] InformationalVersion = "0.0.1"
+    let [<Literal>] AssemblyTitle = "Suave.Azure.Functions"
+    let [<Literal>] AssemblyProduct = "Suave.Azure.Functions"
+    let [<Literal>] AssemblyDescription = "Suave + Azure Functions = Awesomeness"
+    let [<Literal>] AssemblyVersion = "0.0.1"
+    let [<Literal>] AssemblyFileVersion = "0.0.1"
