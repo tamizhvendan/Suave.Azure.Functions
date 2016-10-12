@@ -19,10 +19,6 @@ let suaveHttpResponseHeaders (httpResponseHeaders : HttpResponseHeaders) =
   |> Seq.collect (fun (k,vs) -> vs |> Seq.map (fun v -> (k,v)))
   |> Seq.toList
 
-let httpResponseHeaders (suaveHeaders : (string * string) list) (headers : HttpContentHeaders) =
-  suaveHeaders |> List.iter headers.Add
-  headers
-
 let httpResponseMessage (httpResult : HttpResult) =
   let content = function
   | Bytes c -> c
@@ -30,7 +26,7 @@ let httpResponseMessage (httpResult : HttpResult) =
 
   let res = new HttpResponseMessage()
   let content = new ByteArrayContent(content httpResult.content)
-  httpResponseHeaders httpResult.headers content.Headers |> ignore
+  httpResult.headers |> List.iter content.Headers.Add
   res.Content <- content
   res.StatusCode <- httpStatusCode httpResult.status  
   res

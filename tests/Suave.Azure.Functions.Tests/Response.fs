@@ -46,18 +46,6 @@ let ``suaveHttpResponseHeaders maps System.Net.Http's HttpResponseHeaders to Sua
   expected
   |> Seq.iter (fun (key,vs) -> Assert.True(values key = vs))
 
-
-
-[<Fact>]
-let ``httpResponseHeaders maps Suave.Http's HttpHeaders to System.Net.Http's HttpResponseHeaders ``()=
-  let headers =
-    let res = new ByteArrayContent([|byte 1|])
-    res.Headers
-  let httpResponseHeaders = Response.httpResponseHeaders suaveHeaders headers |> Seq.map (fun h -> (h.Key, h.Value))  
-  suaveHeaders |> List.forall (contains httpResponseHeaders) |> Assert.True
-  Assert.Equal(3, httpResponseHeaders |> Seq.length)
-
-
 [<Fact>]
 let ``httpResponseMessage maps Suave's HttpResult to HttpResponseMessage``() =
   let responseBody = """{ "x" : "y" }"""
