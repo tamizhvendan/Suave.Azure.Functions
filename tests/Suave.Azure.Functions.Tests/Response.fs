@@ -51,7 +51,7 @@ let ``suaveHttpResponseHeaders maps System.Net.Http's HttpResponseHeaders to Sua
 [<Fact>]
 let ``httpResponseHeaders maps Suave.Http's HttpHeaders to System.Net.Http's HttpResponseHeaders ``()=
   let headers =
-    let res = new HttpResponseMessage()
+    let res = new ByteArrayContent([|byte 1|])
     res.Headers
   let httpResponseHeaders = Response.httpResponseHeaders suaveHeaders headers |> Seq.map (fun h -> (h.Key, h.Value))  
   suaveHeaders |> List.forall (contains httpResponseHeaders) |> Assert.True
@@ -70,13 +70,16 @@ let ``httpResponseMessage maps Suave's HttpResult to HttpResponseMessage``() =
       writePreamble = false
     }
   let httpResponseMessage = Response.httpResponseMessage suaveHttpResult
-  let actualContent = runTask <| httpResponseMessage.Content.ReadAsStringAsync() 
-  
+  let actualContent = runTask <| httpResponseMessage.Content.ReadAsStringAsync()
+
   equalDeep responseBody actualContent
   equalDeep httpResponseMessage.StatusCode HttpStatusCode.OK
-  suaveHeaders
-  |> List.iter (fun (k,v) -> Assert.True(httpResponseMessage.Headers.GetValues(k) |> Seq.contains v))
-
+  let headers = 
+   httpResponseMessage.Content.Headers 
+   |> Seq.map (fun h -> h.Key, h.Value)
+   |> Seq.collect (fun (k,vs) -> vs |> Seq.map (fun v -> (k,v)))
+   |> Seq.toList
+  equalDeep suaveHeaders headers
 
 
 [<Fact>]

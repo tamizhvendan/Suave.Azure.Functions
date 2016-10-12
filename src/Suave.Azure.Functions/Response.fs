@@ -19,7 +19,7 @@ let suaveHttpResponseHeaders (httpResponseHeaders : HttpResponseHeaders) =
   |> Seq.collect (fun (k,vs) -> vs |> Seq.map (fun v -> (k,v)))
   |> Seq.toList
 
-let httpResponseHeaders (suaveHeaders : (string * string) list) (headers : HttpResponseHeaders) =
+let httpResponseHeaders (suaveHeaders : (string * string) list) (headers : HttpContentHeaders) =
   suaveHeaders |> List.iter headers.Add
   headers
 
@@ -29,9 +29,10 @@ let httpResponseMessage (httpResult : HttpResult) =
   | _ -> Array.empty
 
   let res = new HttpResponseMessage()
-  res.Content <- new ByteArrayContent(content httpResult.content)
-  res.StatusCode <- httpStatusCode httpResult.status
-  httpResponseHeaders httpResult.headers res.Headers |> ignore
+  let content = new ByteArrayContent(content httpResult.content)
+  httpResponseHeaders httpResult.headers content.Headers |> ignore
+  res.Content <- content
+  res.StatusCode <- httpStatusCode httpResult.status  
   res
 
 let suaveHttpResult (httpResponseMessage : HttpResponseMessage) = async {
