@@ -1,3 +1,5 @@
+#### 0.0.5
+* Fixing Content-Type Header issue in HTTP Response
 #### 0.0.4
 * Setting HttpContent Headers
 #### 0.0.3
