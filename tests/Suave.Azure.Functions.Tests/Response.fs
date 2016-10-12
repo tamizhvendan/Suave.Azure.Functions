@@ -59,7 +59,6 @@ let ``httpResponseMessage maps Suave's HttpResult to HttpResponseMessage``() =
     }
   let httpResponseMessage = Response.httpResponseMessage suaveHttpResult
   let actualContent = runTask <| httpResponseMessage.Content.ReadAsStringAsync()
-
   equalDeep responseBody actualContent
   equalDeep httpResponseMessage.StatusCode HttpStatusCode.OK
   let headers = 

@@ -26,7 +26,13 @@ let httpResponseMessage (httpResult : HttpResult) =
 
   let res = new HttpResponseMessage()
   let content = new ByteArrayContent(content httpResult.content)
-  httpResult.headers |> List.map content.Headers.TryAddWithoutValidation |> ignore
+  httpResult.headers 
+  |> List.iter (fun (name,value) -> 
+                match name with
+                | "Content-Type" ->
+                  content.Headers.ContentType <- new Headers.MediaTypeHeaderValue(value)
+                | _ -> content.Headers.Add(name,value))
+
   res.Content <- content
   res.StatusCode <- httpStatusCode httpResult.status  
   res
