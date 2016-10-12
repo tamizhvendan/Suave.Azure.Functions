@@ -28,10 +28,13 @@ let httpResponseMessage (httpResult : HttpResult) =
   let content = new ByteArrayContent(content httpResult.content)
   httpResult.headers 
   |> List.iter (fun (name,value) -> 
-                match name with
-                | "Content-Type" ->
-                  content.Headers.ContentType <- new Headers.MediaTypeHeaderValue(value)
-                | _ -> content.Headers.Add(name,value))
+                  try 
+                    match name with
+                    | "Content-Type" ->
+                      content.Headers.ContentType <- new Headers.MediaTypeHeaderValue(value)
+                    | _ -> content.Headers.Add(name,value)
+                  with
+                    | ex -> failwithf "[%s,%s]:%s\n%s" name value ex.Message ex.StackTrace)
 
   res.Content <- content
   res.StatusCode <- httpStatusCode httpResult.status  

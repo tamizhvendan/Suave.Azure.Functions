@@ -1,3 +1,5 @@
+#### 0.0.8
+* Adding Custom Exception
 #### 0.0.7
 * Explicitly setting Content-Type Header in HTTP Response
 #### 0.0.6
