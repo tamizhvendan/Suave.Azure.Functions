@@ -26,7 +26,7 @@ let httpResponseMessage (httpResult : HttpResult) =
 
   let res = new HttpResponseMessage()
   let content = new ByteArrayContent(content httpResult.content)
-  httpResult.headers |> List.iter content.Headers.Add
+  httpResult.headers |> List.map content.Headers.TryAddWithoutValidation |> ignore
   res.Content <- content
   res.StatusCode <- httpStatusCode httpResult.status  
   res
