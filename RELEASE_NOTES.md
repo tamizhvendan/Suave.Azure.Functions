@@ -1,3 +1,5 @@
+#### 0.0.9
+* Refactored Custom Header Add Exception
 #### 0.0.8
 * Adding Custom Exception
 #### 0.0.7

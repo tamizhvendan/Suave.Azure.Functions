@@ -14,10 +14,10 @@ licenseUrl
 requireLicenseAcceptance
     false
 copyright
-    Copyright 2015
+    Copyright 2015, Tamizhvendan
 tags
     fsharp suave system.net.http azure-functions
 summary
     Suave + Azure Functions = Awesomeness
 description
-    Library to use Suave in Azure Functions
+    A utility library to scale Up Azure Functions in F# Using Suave. By using this libary you can host and run your Suave code in Azure Functions.

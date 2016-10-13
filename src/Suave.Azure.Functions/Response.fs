@@ -34,7 +34,8 @@ let httpResponseMessage (httpResult : HttpResult) =
                       content.Headers.ContentType <- new Headers.MediaTypeHeaderValue(value)
                     | _ -> content.Headers.Add(name,value)
                   with
-                    | ex -> failwithf "[%s,%s]:%s\n%s" name value ex.Message ex.StackTrace)
+                    | ex -> 
+                      failwithf "Error while setting response header '%s' with the value '%s' :%s" name value ex.Message)
 
   res.Content <- content
   res.StatusCode <- httpStatusCode httpResult.status  

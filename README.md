@@ -1,41 +1,25 @@
-[![Issue Stats](http://issuestats.com/github/fsprojects/ProjectScaffold/badge/issue)](http://issuestats.com/github/fsprojects/ProjectScaffold)
-[![Issue Stats](http://issuestats.com/github/fsprojects/ProjectScaffold/badge/pr)](http://issuestats.com/github/fsprojects/ProjectScaffold)
+[![Issue Stats](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions/badge/issue)](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions)
+[![Issue Stats](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions/badge/pr)](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions)
 
-# ProjectScaffold
+# Suave.Azure.Functions
 
-This project can be used to scaffold a prototypical .NET solution including file system layout and tooling. This includes a build process that: 
+A utility library to scale Up Azure Functions in F# Using Suave. By using this libary you can host and run your Suave code in Azure Functions.
 
-* updates all AssemblyInfo files
-* compiles the application and runs all test projects
-* generates [SourceLinks](https://github.com/ctaggart/SourceLink)
-* generates API docs based on XML document tags
-* generates [documentation based on Markdown files](http://fsprojects.github.io/ProjectScaffold/writing-docs.html)
-* generates [NuGet](http://www.nuget.org) packages
-* and allows a simple [one step release process](http://fsprojects.github.io/ProjectScaffold/release-process.html).
+The implementation details can be found in [my blog post](http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)
 
-In order to start the scaffolding process run 
+Documentation: *Coming Soon*
 
-    > build.cmd // on windows    
-    $ ./build.sh  // on unix
-    
-Read the [Getting started tutorial](http://fsprojects.github.io/ProjectScaffold/index.html#Getting-started) to learn more.
+## Samples
 
-Documentation: http://fsprojects.github.io/ProjectScaffold
-
-## Requirements
-
-ProjectScaffold requires a local git installation. You can download git from [Git Downloads](https://git-scm.com/downloads).
+* [HelloSuave](https://gist.github.com/tamizhvendan/07fc54c3750d154a84ba7d6ccdb94eb6) - A Sample `Hello World` Implementation
+* [HelloREST](https://gist.github.com/tamizhvendan/68d9a97ae4cf4b6488eb6cf0170e7b89) - A mock REST API implementation using Custom Paths. To pass the custom path, use the Reader header `X-Suave-Path` 
 
 ## Build Status
 
 Mono | .NET
 ---- | ----
-[![Mono CI Build Status](https://img.shields.io/travis/fsprojects/ProjectScaffold/master.svg)](https://travis-ci.org/fsprojects/ProjectScaffold) | [![.NET Build Status](https://img.shields.io/appveyor/ci/fsgit/ProjectScaffold/master.svg)](https://ci.appveyor.com/project/fsgit/projectscaffold)
+[![Mono CI Build Status](https://img.shields.io/travis/tamizhvendan/Suave.Azure.Functions/master.svg)](https://travis-ci.org/tamizhvendan/Suave.Azure.Functions) | [![.NET Build Status](https://img.shields.io/appveyor/ci/tamizhvendan/suave-azure-functions/master.svg)](https://ci.appveyor.com/project/tamizhvendan/suave-azure-functions)
 
 ## Maintainer(s)
 
-- [@forki](https://github.com/forki)
-- [@pblasucci](https://github.com/pblasucci)
-- [@sergey-tihon](https://github.com/sergey-tihon)
-
-The default maintainer account for projects under "fsprojects" is [@fsprojectsgit](https://github.com/fsprojectsgit) - F# Community Project Incubation Space (repo management)
+- [@tamizhvendan](https://github.com/tamizhvendan)

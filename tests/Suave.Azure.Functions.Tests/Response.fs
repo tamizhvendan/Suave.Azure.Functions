@@ -66,7 +66,8 @@ let ``httpResponseMessage maps Suave's HttpResult to HttpResponseMessage``() =
    |> Seq.map (fun h -> h.Key, h.Value)
    |> Seq.collect (fun (k,vs) -> vs |> Seq.map (fun v -> (k,v)))
    |> Seq.toList
-  equalDeep suaveHeaders headers
+  suaveHeaders
+  |> List.iter (fun (k,v) -> headers |> List.filter (fun x -> (fst x) = k) |> List.contains (k,v) |> equalDeep true)
 
 
 [<Fact>]
