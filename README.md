@@ -3,7 +3,7 @@
 
 # Suave.Azure.Functions [![Nuget](https://img.shields.io/nuget/v/Suave.Azure.Functions.svg?style=flat)](https://www.nuget.org/packages/Suave.Azure.Functions)
 
-A utility library to scale Up Azure Functions in F# Using Suave. By using this libary you can host and run your Suave code in Azure Functions.
+A utility library to scale Up [Azure Functions](https://azure.microsoft.com/en-in/services/functions/) in F# Using [Suave](https://suave.io/). By using this libary you can host and run your Suave code in Azure Functions.
 
 The implementation details can be found in [my blog post](http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)
 
@@ -12,7 +12,7 @@ Documentation: *Coming Soon*
 ## Samples
 
 * [HelloSuave](https://gist.github.com/tamizhvendan/07fc54c3750d154a84ba7d6ccdb94eb6) - A Sample `Hello World` Implementation
-* [HelloREST](https://gist.github.com/tamizhvendan/68d9a97ae4cf4b6488eb6cf0170e7b89) - A mock REST API implementation using Custom Paths. To pass the custom path, use the Reader header `X-Suave-Path` 
+* [HelloREST](https://gist.github.com/tamizhvendan/68d9a97ae4cf4b6488eb6cf0170e7b89) - A mock REST API implementation using Custom Paths. To pass the custom path, use a custom HTTP Request header `X-Suave-Path`. Refer [sample requests](https://gist.github.com/tamizhvendan/68d9a97ae4cf4b6488eb6cf0170e7b89#file-sample_requests-sh) for details
 
 ## Build Status
 
