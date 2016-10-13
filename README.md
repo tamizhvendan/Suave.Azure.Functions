@@ -1,7 +1,7 @@
 [![Issue Stats](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions/badge/issue)](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions)
 [![Issue Stats](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions/badge/pr)](http://issuestats.com/github/tamizhvendan/Suave.Azure.Functions)
 
-# Suave.Azure.Functions
+# Suave.Azure.Functions [![Nuget](https://img.shields.io/nuget/v/Suave.Azure.Functions.svg?style=flat)](https://www.nuget.org/packages/Suave.Azure.Functions)
 
 A utility library to scale Up Azure Functions in F# Using Suave. By using this libary you can host and run your Suave code in Azure Functions.
 
